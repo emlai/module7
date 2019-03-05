@@ -1,0 +1,31 @@
+cmake_minimum_required(VERSION 3.12)
+project(module7)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+if(MINGW)
+    set(CMAKE_EXE_LINKER_FLAGS -static-libgcc)
+endif()
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+set(SDL_VERSION 2.0.9)
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/SDL2-${SDL_VERSION})
+    file(DOWNLOAD https://libsdl.org/release/SDL2-${SDL_VERSION}.tar.gz ${CMAKE_BINARY_DIR}/SDL2.zip)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfz ${CMAKE_BINARY_DIR}/SDL2.zip)
+endif()
+add_subdirectory(${CMAKE_BINARY_DIR}/SDL2-${SDL_VERSION})
+
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/glm)
+    file(DOWNLOAD https://github.com/g-truc/glm/releases/download/0.9.9.3/glm-0.9.9.3.zip ${CMAKE_BINARY_DIR}/glm.zip)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfz ${CMAKE_BINARY_DIR}/glm.zip)
+endif()
+set(GLM_TEST_ENABLE OFF CACHE BOOL "" FORCE)
+add_subdirectory(${CMAKE_BINARY_DIR}/glm)
+
+add_executable(module7 main.cpp)
+if(MINGW)
+    target_link_libraries(module7 mingw32)
+endif()
+target_link_libraries(module7 SDL2main SDL2 glm)
