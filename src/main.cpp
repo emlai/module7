@@ -16,7 +16,7 @@ vec2 moveTowards(vec2 current, vec2 target, float maxDistance)
 
 void update(Level* level, const uint8_t* keyboardState, float deltaTime)
 {
-    bool onTile = level->getTile(level->playerPos + ivec2(0, 1)) != EmptyTile;
+    bool onTile = level->playerPos.y == level->playerRenderPos.y && level->getTile(level->playerPos + ivec2(0, 1)) != EmptyTile;
     bool left = keyboardState[SDL_SCANCODE_LEFT];
     bool right = keyboardState[SDL_SCANCODE_RIGHT];
 
