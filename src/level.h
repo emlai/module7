@@ -3,7 +3,7 @@
 
 using namespace glm;
 
-const int tileSize = 32;
+const int tileSize = 16;
 
 enum Tile
 {
