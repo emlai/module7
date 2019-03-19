@@ -34,6 +34,12 @@ int main(int argc, char* argv[])
         {
             switch (event.type)
             {
+                case SDL_MOUSEBUTTONDOWN:
+                {
+                    auto mouse = getMousePos();
+                    level.tiles[mouse.x / tileSize][mouse.y / tileSize] = WallTile;
+                    break;
+                }
                 case SDL_QUIT:
                     running = false;
                     break;
