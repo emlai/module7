@@ -18,4 +18,6 @@ struct Level
     Tile tiles[width][height];
     vec2 playerRenderPos;
     ivec2 playerPos;
+
+    Tile getTile(ivec2 pos);
 };

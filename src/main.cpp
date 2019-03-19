@@ -16,14 +16,14 @@ vec2 moveTowards(vec2 current, vec2 target, float maxDistance)
 
 void update(Level* level, const uint8_t* keyboardState, float deltaTime)
 {
-    bool onTile = level->tiles[level->playerPos.x][level->playerPos.y + 1] != EmptyTile;
+    bool onTile = level->getTile(level->playerPos + ivec2(0, 1)) != EmptyTile;
     bool left = keyboardState[SDL_SCANCODE_LEFT];
     bool right = keyboardState[SDL_SCANCODE_RIGHT];
 
-    if (onTile && left && !right && level->playerPos.x >= level->playerRenderPos.x)
+    if (onTile && left && !right && level->playerPos.x >= level->playerRenderPos.x && level->getTile(level->playerPos + ivec2(-1, 0)) == EmptyTile)
         level->playerPos.x--;
 
-    if (onTile && !left && right && level->playerPos.x <= level->playerRenderPos.x)
+    if (onTile && !left && right && level->playerPos.x <= level->playerRenderPos.x && level->getTile(level->playerPos + ivec2(1, 0)) == EmptyTile)
         level->playerPos.x++;
 
     if (!onTile && vec2(level->playerPos) == level->playerRenderPos)
