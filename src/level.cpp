@@ -13,7 +13,7 @@ vec2 moveTowards(vec2 current, vec2 target, float maxDistance)
     return current + diff / magnitude * maxDistance;
 }
 
-void updateLevel(Level* level, const uint8_t keyboardState[])
+void updateLevel(Level* level, const uint8_t keyboardState[], float deltaTime)
 {
     bool onTile = level->tiles[level->playerPos.x][level->playerPos.y + 1] != EmptyTile;
     bool left = keyboardState[SDL_SCANCODE_LEFT];
@@ -28,5 +28,5 @@ void updateLevel(Level* level, const uint8_t keyboardState[])
     if (!onTile && vec2(level->playerPos) == level->playerRenderPos)
         level->playerPos.y++;
 
-    level->playerRenderPos = moveTowards(level->playerRenderPos, vec2(level->playerPos), 0.1f);
+    level->playerRenderPos = moveTowards(level->playerRenderPos, vec2(level->playerPos), 5 * deltaTime);
 }

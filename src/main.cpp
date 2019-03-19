@@ -27,10 +27,17 @@ int main(int argc, char* argv[])
     SDL_Event event;
     auto keyboardState = SDL_GetKeyboardState(nullptr);
     bool running = true;
+    uint64_t previousTime = 0;
+    uint64_t currentTime = 0;
+
     Level level = {};
 
     while (running)
     {
+        previousTime = currentTime;
+        currentTime = SDL_GetPerformanceCounter();
+        float deltaTime = float(currentTime - previousTime) / SDL_GetPerformanceFrequency();
+
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
@@ -57,9 +64,7 @@ int main(int argc, char* argv[])
         renderLevel(&level);
         SDL_RenderPresent(renderer);
 
-        updateLevel(&level, keyboardState);
-
-        SDL_Delay(10);
+        updateLevel(&level, keyboardState, deltaTime);
     }
 
     SDL_DestroyRenderer(renderer);
