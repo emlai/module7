@@ -74,8 +74,9 @@ int main(int argc, char* argv[])
             {
                 case SDL_MOUSEBUTTONDOWN:
                 {
-                    auto mouse = getMousePos();
-                    auto tile = &level.tiles[mouse.x / tileSize][mouse.y / tileSize];
+                    ivec2 mousePos;
+                    SDL_GetMouseState(&mousePos.x, &mousePos.y);
+                    auto tile = &level.getTile(mousePos / tileSize);
 
                     if (*tile == EmptyTile)
                         *tile = WallTile;

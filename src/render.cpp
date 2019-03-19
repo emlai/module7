@@ -6,7 +6,8 @@ SDL_Renderer* renderer;
 
 void renderLevel(Level* level)
 {
-    SDL_Point mouse = getMousePos();
+    SDL_Point mouse;
+    SDL_GetMouseState(&mouse.x, &mouse.y);
 
     for (int x = 0; x < level->width; x++)
     {
@@ -42,11 +43,4 @@ void renderLevel(Level* level)
         tileSize - tileSize / 4
     };
     SDL_RenderFillRect(renderer, &playerRect);
-}
-
-SDL_Point getMousePos()
-{
-    SDL_Point mouse;
-    SDL_GetMouseState(&mouse.x, &mouse.y);
-    return mouse;
 }

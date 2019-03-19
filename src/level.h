@@ -19,5 +19,5 @@ struct Level
     vec2 playerRenderPos;
     ivec2 playerPos;
 
-    Tile getTile(ivec2 pos);
+    Tile& getTile(ivec2 pos);
 };
