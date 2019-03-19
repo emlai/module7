@@ -30,6 +30,14 @@ void update(Level* level, const uint8_t* keyboardState, float deltaTime)
         level->playerPos.y++;
 
     level->playerRenderPos = moveTowards(level->playerRenderPos, vec2(level->playerPos), 5 * deltaTime);
+
+    ivec2 mousePos;
+    auto buttons = SDL_GetMouseState(&mousePos.x, &mousePos.y);
+
+    if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT))
+        level->getTile(mousePos / tileSize) = WallTile;
+    else if (buttons & SDL_BUTTON(SDL_BUTTON_RIGHT))
+        level->getTile(mousePos / tileSize) = EmptyTile;
 }
 
 int main(int argc, char* argv[])
@@ -72,19 +80,6 @@ int main(int argc, char* argv[])
         {
             switch (event.type)
             {
-                case SDL_MOUSEBUTTONDOWN:
-                {
-                    ivec2 mousePos;
-                    SDL_GetMouseState(&mousePos.x, &mousePos.y);
-                    auto tile = &level.getTile(mousePos / tileSize);
-
-                    if (*tile == EmptyTile)
-                        *tile = WallTile;
-                    else
-                        *tile = EmptyTile;
-
-                    break;
-                }
                 case SDL_QUIT:
                     running = false;
                     break;
