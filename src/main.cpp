@@ -25,6 +25,7 @@ int main(int argc, char* argv[])
     }
 
     SDL_Event event;
+    auto keyboardState = SDL_GetKeyboardState(nullptr);
     bool running = true;
     Level level = {};
 
@@ -56,7 +57,7 @@ int main(int argc, char* argv[])
         renderLevel(&level);
         SDL_RenderPresent(renderer);
 
-        updateLevel(&level);
+        updateLevel(&level, keyboardState);
 
         SDL_Delay(10);
     }
