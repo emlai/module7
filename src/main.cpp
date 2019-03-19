@@ -37,7 +37,13 @@ int main(int argc, char* argv[])
                 case SDL_MOUSEBUTTONDOWN:
                 {
                     auto mouse = getMousePos();
-                    level.tiles[mouse.x / tileSize][mouse.y / tileSize] = WallTile;
+                    auto tile = &level.tiles[mouse.x / tileSize][mouse.y / tileSize];
+
+                    if (*tile == EmptyTile)
+                        *tile = WallTile;
+                    else
+                        *tile = EmptyTile;
+
                     break;
                 }
                 case SDL_QUIT:
