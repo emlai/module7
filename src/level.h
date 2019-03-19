@@ -1,5 +1,7 @@
 #pragma once
 
+const int tileSize = 32;
+
 enum Tile
 {
     EmptyTile,

@@ -6,10 +6,15 @@ SDL_Renderer* renderer;
 
 void renderLevel(Level* level)
 {
+    SDL_Point mouse;
+    SDL_GetMouseState(&mouse.x, &mouse.y);
+
     for (int x = 0; x < level->width; x++)
     {
         for (int y = 0; y < level->height; y++)
         {
+            SDL_Rect rect = { x * tileSize, y * tileSize, tileSize, tileSize };
+
             switch (level->tiles[x][y])
             {
                 case EmptyTile:
@@ -20,8 +25,13 @@ void renderLevel(Level* level)
                     break;
             }
 
-            SDL_Rect rect = { x, y, level->width, level->height };
             SDL_RenderFillRect(renderer, &rect);
+
+            if (SDL_PointInRect(&mouse, &rect))
+            {
+                SDL_SetRenderDrawColor(renderer, 0x00, 0xff, 0x00, 0xff);
+                SDL_RenderDrawRect(renderer, &rect);
+            }
         }
     }
 }
