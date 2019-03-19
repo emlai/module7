@@ -19,5 +19,3 @@ struct Level
     vec2 playerRenderPos;
     ivec2 playerPos;
 };
-
-void updateLevel(Level* level, const uint8_t keyboardState[], float deltaTime);

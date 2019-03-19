@@ -24,7 +24,7 @@ endif()
 set(GLM_TEST_ENABLE OFF CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_BINARY_DIR}/glm)
 
-add_executable(module7 src/main.cpp src/level.h src/render.h src/render.cpp src/level.cpp)
+add_executable(module7 src/main.cpp src/level.h src/render.h src/render.cpp)
 if(MINGW)
     target_link_libraries(module7 mingw32)
 endif()
