@@ -35,7 +35,12 @@ void renderLevel(Level* level)
     }
 
     SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0x33, 0xff);
-    SDL_Rect playerRect = { level->playerX + tileSize / 4, level->playerY + tileSize / 4, tileSize / 2, tileSize - tileSize / 4 };
+    SDL_Rect playerRect = {
+        int(level->playerRenderPos.x * tileSize + tileSize / 4),
+        int(level->playerRenderPos.y * tileSize + tileSize / 4),
+        tileSize / 2,
+        tileSize - tileSize / 4
+    };
     SDL_RenderFillRect(renderer, &playerRect);
 }
 

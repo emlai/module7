@@ -56,6 +56,8 @@ int main(int argc, char* argv[])
         renderLevel(&level);
         SDL_RenderPresent(renderer);
 
+        updateLevel(&level);
+
         SDL_Delay(10);
     }
 
