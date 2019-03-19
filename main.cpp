@@ -1,4 +1,6 @@
 #include <SDL.h>
+#include "level.h"
+#include "render.h"
 
 int main(int argc, char* argv[])
 {
@@ -9,15 +11,22 @@ int main(int argc, char* argv[])
     }
 
     SDL_Window* window = SDL_CreateWindow("Module7", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0);
-
     if (!window)
     {
         SDL_Log("Cannot create window: %s", SDL_GetError());
         return 1;
     }
 
+    renderer = SDL_CreateRenderer(window, -1, 0);
+    if (!renderer)
+    {
+        SDL_Log("Cannot create renderer: %s", SDL_GetError());
+        return 1;
+    }
+
     SDL_Event event;
     bool running = true;
+    Level level = {};
 
     while (running)
     {
@@ -31,9 +40,14 @@ int main(int argc, char* argv[])
             }
         }
 
+        SDL_RenderClear(renderer);
+        renderLevel(&level);
+        SDL_RenderPresent(renderer);
+
         SDL_Delay(10);
     }
 
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;
