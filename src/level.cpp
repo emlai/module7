@@ -18,20 +18,21 @@ void updateLevel(Level* level, const uint8_t keyboardState[])
     if (vec2(level->playerPos) == level->playerRenderPos)
     {
         bool movedHorizontally = false;
+        bool onTile = level->tiles[level->playerPos.x][level->playerPos.y + 1] != EmptyTile;
 
-        if (keyboardState[SDL_SCANCODE_LEFT])
+        if (onTile && keyboardState[SDL_SCANCODE_LEFT])
         {
             level->playerPos.x -= 1;
             movedHorizontally = true;
         }
 
-        if (keyboardState[SDL_SCANCODE_RIGHT])
+        if (onTile && keyboardState[SDL_SCANCODE_RIGHT])
         {
             level->playerPos.x += 1;
             movedHorizontally = true;
         }
 
-        if (!movedHorizontally && level->tiles[level->playerPos.x][level->playerPos.y + 1] == EmptyTile)
+        if (!movedHorizontally && !onTile)
             level->playerPos.y++;
     }
 
