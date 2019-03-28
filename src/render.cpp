@@ -23,6 +23,9 @@ void renderLevel(Level* level)
                 case WallTile:
                     SDL_SetRenderDrawColor(renderer, 0x66, 0x66, 0x66, 0xff);
                     break;
+                case BoxTile:
+                    SDL_SetRenderDrawColor(renderer, 0x44, 0x44, 0x44, 0xff);
+                    break;
             }
 
             SDL_RenderFillRect(renderer, &rect);

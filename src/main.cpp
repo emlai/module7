@@ -16,8 +16,15 @@ vec2 moveTowards(vec2 current, vec2 target, float maxDistance)
     return current + diff / magnitude * maxDistance;
 }
 
-void update(Level* level, const uint8_t* keyboardState, float deltaTime)
+struct GameState
 {
+    Level level;
+    Tile brush = WallTile;
+};
+
+void update(GameState* state, const uint8_t* keyboardState, float deltaTime)
+{
+    auto level = &state->level;
     bool onTile = level->playerPos.y == level->playerRenderPos.y && level->getTile(level->playerPos + ivec2(0, 1)) != EmptyTile;
     bool left = keyboardState[SDL_SCANCODE_LEFT];
     bool right = keyboardState[SDL_SCANCODE_RIGHT];
@@ -37,7 +44,7 @@ void update(Level* level, const uint8_t* keyboardState, float deltaTime)
     auto buttons = SDL_GetMouseState(&mousePos.x, &mousePos.y);
 
     if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT))
-        level->getTile(mousePos / tileSize) = WallTile;
+        level->getTile(mousePos / tileSize) = state->brush;
     else if (buttons & SDL_BUTTON(SDL_BUTTON_RIGHT))
         level->getTile(mousePos / tileSize) = EmptyTile;
 }
@@ -70,7 +77,7 @@ int main(int argc, char* argv[])
     uint64_t previousTime = 0;
     uint64_t currentTime = 0;
 
-    Level level = {};
+    GameState state;
 
     while (running)
     {
@@ -82,6 +89,17 @@ int main(int argc, char* argv[])
         {
             switch (event.type)
             {
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.sym)
+                    {
+                        case SDLK_1:
+                            state.brush = WallTile;
+                            break;
+                        case SDLK_2:
+                            state.brush = BoxTile;
+                            break;
+                    }
+                    break;
                 case SDL_QUIT:
                     running = false;
                     break;
@@ -89,10 +107,10 @@ int main(int argc, char* argv[])
         }
 
         SDL_RenderClear(renderer);
-        renderLevel(&level);
+        renderLevel(&state.level);
         SDL_RenderPresent(renderer);
 
-        update(&level, keyboardState, deltaTime);
+        update(&state, keyboardState, deltaTime);
     }
 
     SDL_DestroyRenderer(renderer);

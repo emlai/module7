@@ -8,7 +8,8 @@ const int tileSize = 16;
 enum Tile
 {
     EmptyTile,
-    WallTile
+    WallTile,
+    BoxTile
 };
 
 struct Level
