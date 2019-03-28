@@ -3,6 +3,8 @@
 #include "level.h"
 #include "render.h"
 
+constexpr float playerSpeed = 10;
+
 vec2 moveTowards(vec2 current, vec2 target, float maxDistance)
 {
     vec2 diff = target - current;
@@ -29,7 +31,7 @@ void update(Level* level, const uint8_t* keyboardState, float deltaTime)
     if (!onTile && vec2(level->playerPos) == level->playerRenderPos)
         level->playerPos.y++;
 
-    level->playerRenderPos = moveTowards(level->playerRenderPos, vec2(level->playerPos), 5 * deltaTime);
+    level->playerRenderPos = moveTowards(level->playerRenderPos, vec2(level->playerPos), playerSpeed * deltaTime);
 
     ivec2 mousePos;
     auto buttons = SDL_GetMouseState(&mousePos.x, &mousePos.y);
