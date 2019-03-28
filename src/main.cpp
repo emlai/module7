@@ -22,6 +22,28 @@ struct GameState
     Tile brush = WallTile;
 };
 
+bool attemptMove(Level* level, ivec2 dir)
+{
+    auto pos = level->playerPos + dir;
+    auto tile = level->getTile(pos);
+
+    switch (tile)
+    {
+        case EmptyTile:
+            return true;
+        case WallTile:
+            return false;
+        case BoxTile:
+            if (level->getTile(pos + dir) == EmptyTile)
+            {
+                level->setTile(pos + dir, tile);
+                level->setTile(pos, EmptyTile);
+                return true;
+            }
+            return false;
+    }
+}
+
 void update(GameState* state, const uint8_t* keyboardState, float deltaTime)
 {
     auto level = &state->level;
@@ -29,10 +51,10 @@ void update(GameState* state, const uint8_t* keyboardState, float deltaTime)
     bool left = keyboardState[SDL_SCANCODE_LEFT];
     bool right = keyboardState[SDL_SCANCODE_RIGHT];
 
-    if (onTile && left && !right && level->playerPos.x >= level->playerRenderPos.x && level->getTile(level->playerPos + ivec2(-1, 0)) == EmptyTile)
+    if (onTile && left && !right && level->playerPos.x >= level->playerRenderPos.x && attemptMove(level, ivec2(-1, 0)))
         level->playerPos.x--;
 
-    if (onTile && !left && right && level->playerPos.x <= level->playerRenderPos.x && level->getTile(level->playerPos + ivec2(1, 0)) == EmptyTile)
+    if (onTile && !left && right && level->playerPos.x <= level->playerRenderPos.x && attemptMove(level, ivec2(1, 0)))
         level->playerPos.x++;
 
     if (!onTile && vec2(level->playerPos) == level->playerRenderPos)

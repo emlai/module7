@@ -21,4 +21,5 @@ struct Level
     ivec2 playerPos;
 
     Tile& getTile(ivec2 pos);
+    void setTile(ivec2 pos, Tile tile);
 };
