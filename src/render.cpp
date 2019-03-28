@@ -6,44 +6,40 @@ SDL_Renderer* renderer;
 
 void renderLevel(Level* level)
 {
-    SDL_Point mouse;
-    SDL_GetMouseState(&mouse.x, &mouse.y);
+    SDL_SetRenderDrawColor(renderer, 0xcc, 0xcc, 0xcc, 0xff);
+    SDL_RenderFillRect(renderer, nullptr);
 
-    for (int x = 0; x < level->width; x++)
+    for (auto& object : level->objects)
     {
-        for (int y = 0; y < level->height; y++)
+        switch (object.type)
         {
-            SDL_Rect rect = { x * tileSize, y * tileSize, tileSize, tileSize };
-
-            switch (level->tiles[x][y])
-            {
-                case EmptyTile:
-                    SDL_SetRenderDrawColor(renderer, 0xcc, 0xcc, 0xcc, 0xff);
-                    break;
-                case WallTile:
-                    SDL_SetRenderDrawColor(renderer, 0x66, 0x66, 0x66, 0xff);
-                    break;
-                case BoxTile:
-                    SDL_SetRenderDrawColor(renderer, 0x44, 0x44, 0x44, 0xff);
-                    break;
-            }
-
-            SDL_RenderFillRect(renderer, &rect);
-
-            if (SDL_PointInRect(&mouse, &rect))
-            {
-                SDL_SetRenderDrawColor(renderer, 0x00, 0xff, 0x00, 0xff);
-                SDL_RenderDrawRect(renderer, &rect);
-            }
+            case WallTile:
+                SDL_SetRenderDrawColor(renderer, 0x66, 0x66, 0x66, 0xff);
+                break;
+            case BoxTile:
+                SDL_SetRenderDrawColor(renderer, 0x44, 0x44, 0x44, 0xff);
+                break;
+            case Player:
+                SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0x33, 0xff);
+                break;
         }
+
+        SDL_Rect rect = { int(object.renderPos.x * tileSize), int(object.renderPos.y * tileSize), tileSize, tileSize };
+
+        if (object.type == Player)
+        {
+            rect.x += tileSize / 4;
+            rect.y += tileSize / 4;
+            rect.w /= 2;
+            rect.h -= tileSize / 4;
+        }
+
+        SDL_RenderFillRect(renderer, &rect);
     }
 
-    SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0x33, 0xff);
-    SDL_Rect playerRect = {
-        int(level->playerRenderPos.x * tileSize + tileSize / 4),
-        int(level->playerRenderPos.y * tileSize + tileSize / 4),
-        tileSize / 2,
-        tileSize - tileSize / 4
-    };
-    SDL_RenderFillRect(renderer, &playerRect);
+    SDL_Point mouse;
+    SDL_GetMouseState(&mouse.x, &mouse.y);
+    SDL_Rect rect = { mouse.x / tileSize * tileSize, mouse.y / tileSize * tileSize, tileSize, tileSize };
+    SDL_SetRenderDrawColor(renderer, 0x00, 0xff, 0x00, 0xff);
+    SDL_RenderDrawRect(renderer, &rect);
 }

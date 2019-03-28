@@ -1,11 +1,32 @@
+#include <algorithm>
 #include "level.h"
 
-Tile& Level::getTile(ivec2 pos)
+Object* Level::getTile(ivec2 pos)
 {
-    return tiles[pos.x][pos.y];
+    for (auto& object : objects)
+    {
+        if (object.pos == pos)
+            return &object;
+    }
+
+    return nullptr;
 }
 
-void Level::setTile(ivec2 pos, Tile tile)
+Object* Level::getPlayer()
 {
-    tiles[pos.x][pos.y] = tile;
+    return &objects[0];
+}
+
+void Level::addObject(ivec2 pos, Tile type)
+{
+    if (getTile(pos))
+        return;
+
+    objects.push_back(Object { .type = type, .pos = pos, .renderPos = pos });
+}
+
+void Level::removeObject(ivec2 pos)
+{
+    objects.erase(std::remove_if(objects.begin(), objects.end(), [=](auto& object) { return object.pos == pos && object.type != Player; }),
+                  objects.end());
 }

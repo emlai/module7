@@ -1,9 +1,10 @@
+#include <optional>
 #include <SDL.h>
 #include <glm/geometric.hpp>
 #include "level.h"
 #include "render.h"
 
-constexpr float playerSpeed = 10;
+constexpr float objectSpeed = 10;
 
 vec2 moveTowards(vec2 current, vec2 target, float maxDistance)
 {
@@ -20,55 +21,84 @@ struct GameState
 {
     Level level;
     Tile brush = WallTile;
+    std::optional<ivec2> lastClickedPos;
 };
 
 bool attemptMove(Level* level, ivec2 dir)
 {
-    auto pos = level->playerPos + dir;
-    auto tile = level->getTile(pos);
+    auto pos = level->getPlayer()->pos + dir;
+    auto object = level->getTile(pos);
 
-    switch (tile)
+    if (!object)
+        return true;
+
+    switch (object->type)
     {
-        case EmptyTile:
-            return true;
         case WallTile:
             return false;
         case BoxTile:
-            if (level->getTile(pos + dir) == EmptyTile)
+            if (!level->getTile(pos + dir))
             {
-                level->setTile(pos + dir, tile);
-                level->setTile(pos, EmptyTile);
+                object->pos = pos + dir;
                 return true;
             }
             return false;
+        case Player:
+            return false;
     }
+
+    assert(false);
 }
 
 void update(GameState* state, const uint8_t* keyboardState, float deltaTime)
 {
     auto level = &state->level;
-    bool onTile = level->playerPos.y == level->playerRenderPos.y && level->getTile(level->playerPos + ivec2(0, 1)) != EmptyTile;
     bool left = keyboardState[SDL_SCANCODE_LEFT];
     bool right = keyboardState[SDL_SCANCODE_RIGHT];
 
-    if (onTile && left && !right && level->playerPos.x >= level->playerRenderPos.x && attemptMove(level, ivec2(-1, 0)))
-        level->playerPos.x--;
+    for (auto& object : state->level.objects)
+    {
+        bool onTile = object.pos.y == object.renderPos.y && level->getTile(object.pos + ivec2(0, 1));
 
-    if (onTile && !left && right && level->playerPos.x <= level->playerRenderPos.x && attemptMove(level, ivec2(1, 0)))
-        level->playerPos.x++;
+        if (object.type == Player)
+        {
+            if (onTile && left && !right && object.pos.x >= object.renderPos.x && attemptMove(level, ivec2(-1, 0)))
+                object.pos.x--;
 
-    if (!onTile && vec2(level->playerPos) == level->playerRenderPos)
-        level->playerPos.y++;
+            if (onTile && !left && right && object.pos.x <= object.renderPos.x && attemptMove(level, ivec2(1, 0)))
+                object.pos.x++;
+        }
 
-    level->playerRenderPos = moveTowards(level->playerRenderPos, vec2(level->playerPos), playerSpeed * deltaTime);
+        if (object.type != WallTile && !onTile && vec2(object.pos) == object.renderPos)
+            object.pos.y++;
+
+        object.renderPos = moveTowards(object.renderPos, vec2(object.pos), objectSpeed * deltaTime);
+    }
 
     ivec2 mousePos;
     auto buttons = SDL_GetMouseState(&mousePos.x, &mousePos.y);
+    auto clickedTilePos = mousePos / tileSize;
 
     if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT))
-        level->getTile(mousePos / tileSize) = state->brush;
+    {
+        if (state->lastClickedPos != clickedTilePos)
+        {
+            level->addObject(clickedTilePos, state->brush);
+            state->lastClickedPos = clickedTilePos;
+        }
+    }
     else if (buttons & SDL_BUTTON(SDL_BUTTON_RIGHT))
-        level->getTile(mousePos / tileSize) = EmptyTile;
+    {
+        if (state->lastClickedPos != clickedTilePos)
+        {
+            level->removeObject(clickedTilePos);
+            state->lastClickedPos = clickedTilePos;
+        }
+    }
+    else
+    {
+        state->lastClickedPos.reset();
+    }
 }
 
 int main(int argc, char* argv[])
@@ -100,6 +130,7 @@ int main(int argc, char* argv[])
     uint64_t currentTime = 0;
 
     GameState state;
+    state.level.addObject(ivec2(0, 0), Player);
 
     while (running)
     {
