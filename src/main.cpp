@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
     uint64_t currentTime = 0;
 
     GameState state;
-    state.level.addObject(ivec2(0, 0), Player);
+    state.level.load();
 
     while (running)
     {
@@ -145,6 +145,9 @@ int main(int argc, char* argv[])
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym)
                     {
+                        case SDLK_0:
+                            state.brush = Player;
+                            break;
                         case SDLK_1:
                             state.brush = WallTile;
                             break;
@@ -166,6 +169,7 @@ int main(int argc, char* argv[])
         update(&state, keyboardState, deltaTime);
     }
 
+    state.level.save();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
