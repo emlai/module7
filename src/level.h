@@ -22,8 +22,6 @@ struct Object
 
 struct Level
 {
-    static const int width = 128;
-    static const int height = 128;
     std::vector<Object> objects;
 
     void addObject(ivec2 pos, Tile type);
