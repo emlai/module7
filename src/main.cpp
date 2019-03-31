@@ -37,7 +37,7 @@ bool attemptMove(Level* level, Object* mover, ivec2 dir)
         case WallTile:
             return false;
         case BoxTile:
-            if (!level->getTile(pos + dir))
+            if (attemptMove(level, object, dir))
             {
                 object->pos = pos + dir;
                 return true;
