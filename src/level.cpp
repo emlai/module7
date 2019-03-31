@@ -28,8 +28,7 @@ void Level::addObject(ivec2 pos, Tile type)
 
 void Level::removeObject(ivec2 pos)
 {
-    objects.erase(std::remove_if(objects.begin(), objects.end(), [=](auto& object) { return object.pos == pos && object.type != Player; }),
-                  objects.end());
+    objects.erase(std::remove_if(objects.begin(), objects.end(), [=](auto& object) { return object.pos == pos; }), objects.end());
 }
 
 void Level::save()
