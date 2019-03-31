@@ -11,30 +11,35 @@ void renderLevel(Level* level)
 
     for (auto& object : level->objects)
     {
+        SDL_Rect rect = { int(object.renderPos.x * tileSize), int(object.renderPos.y * tileSize), tileSize, tileSize };
+
         switch (object.type)
         {
             case WallTile:
                 SDL_SetRenderDrawColor(renderer, 0x66, 0x66, 0x66, 0xff);
+                SDL_RenderFillRect(renderer, &rect);
                 break;
+
             case BoxTile:
                 SDL_SetRenderDrawColor(renderer, 0x44, 0x44, 0x44, 0xff);
+                SDL_RenderFillRect(renderer, &rect);
+                rect.x += 1;
+                rect.y += 1;
+                rect.w -= 2;
+                rect.h -= 2;
+                SDL_SetRenderDrawColor(renderer, 0x55, 0x55, 0x55, 0xff);
+                SDL_RenderFillRect(renderer, &rect);
                 break;
+
             case Player:
                 SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0x33, 0xff);
+                rect.x += tileSize / 4;
+                rect.y += tileSize / 4;
+                rect.w /= 2;
+                rect.h -= tileSize / 4;
+                SDL_RenderFillRect(renderer, &rect);
                 break;
         }
-
-        SDL_Rect rect = { int(object.renderPos.x * tileSize), int(object.renderPos.y * tileSize), tileSize, tileSize };
-
-        if (object.type == Player)
-        {
-            rect.x += tileSize / 4;
-            rect.y += tileSize / 4;
-            rect.w /= 2;
-            rect.h -= tileSize / 4;
-        }
-
-        SDL_RenderFillRect(renderer, &rect);
     }
 
     SDL_Point mouse;
