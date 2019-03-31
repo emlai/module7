@@ -13,11 +13,6 @@ Object* Level::getTile(ivec2 pos)
     return nullptr;
 }
 
-Object* Level::getPlayer()
-{
-    return &objects[0];
-}
-
 void Level::addObject(ivec2 pos, Tile type)
 {
     if (getTile(pos))

@@ -24,9 +24,9 @@ struct GameState
     std::optional<ivec2> lastClickedPos;
 };
 
-bool attemptMove(Level* level, ivec2 dir)
+bool attemptMove(Level* level, Object* mover, ivec2 dir)
 {
-    auto pos = level->getPlayer()->pos + dir;
+    auto pos = mover->pos + dir;
     auto object = level->getTile(pos);
 
     if (!object)
@@ -62,10 +62,10 @@ void update(GameState* state, const uint8_t* keyboardState, float deltaTime)
 
         if (object.type == Player)
         {
-            if (onTile && left && !right && object.pos.x >= object.renderPos.x && attemptMove(level, ivec2(-1, 0)))
+            if (onTile && left && !right && object.pos.x >= object.renderPos.x && attemptMove(level, &object, ivec2(-1, 0)))
                 object.pos.x--;
 
-            if (onTile && !left && right && object.pos.x <= object.renderPos.x && attemptMove(level, ivec2(1, 0)))
+            if (onTile && !left && right && object.pos.x <= object.renderPos.x && attemptMove(level, &object, ivec2(1, 0)))
                 object.pos.x++;
         }
 

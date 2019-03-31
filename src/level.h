@@ -29,7 +29,6 @@ struct Level
     void addObject(ivec2 pos, Tile type);
     void removeObject(ivec2 pos);
     Object* getTile(ivec2 pos);
-    Object* getPlayer();
     void save();
     void load();
 };
