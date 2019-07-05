@@ -1,0 +1,181 @@
+import "SDL.h";
+
+const objectSpeed = 10;
+
+vec2 moveTowards(vec2 current, vec2 target, float maxDistance)
+{
+    var diff = target - current;
+    var magnitude = diff.length();
+
+    if (magnitude <= maxDistance || magnitude == 0)
+        return target;
+
+    return current + diff / magnitude * maxDistance;
+}
+
+struct GameState
+{
+    Level level;
+    Tile brush;
+    ivec2 lastClickedPos;
+
+    init()
+    {
+        level = Level();
+        brush = Tile.WallTile;
+        lastClickedPos = ivec2(-1, -1);
+    }
+}
+
+bool attemptMove(Level* level, Object* mover, ivec2 dir)
+{
+    var pos = mover.pos + dir;
+    var object = level.getTile(pos);
+
+    if (!object)
+        return true;
+
+    switch (object!.type)
+    {
+        case Tile.WallTile:
+            return false;
+        case Tile.BoxTile:
+            if (attemptMove(level, object!, dir))
+            {
+                object!.pos = pos + dir;
+                return true;
+            }
+            return false;
+        case Tile.Player:
+            return false;
+    }
+
+    assert(false);
+    return true;
+}
+
+void update(GameState* state, uint8[?]* keyboardState, float deltaTime)
+{
+    var level = &state.level;
+    var left = keyboardState[SDL_SCANCODE_LEFT] != 0;
+    var right = keyboardState[SDL_SCANCODE_RIGHT] != 0;
+
+    for (var object in state.level.objects)
+    {
+        var onTile = float(object.pos.y) == object.renderPos.y && level.getTile(object.pos + ivec2(0, 1)) != null;
+
+        if (object.type == Tile.Player)
+        {
+            if (onTile && left && !right && float(object.pos.x) >= object.renderPos.x && attemptMove(level, &object, ivec2(-1, 0)))
+                object.pos.x--;
+
+            if (onTile && !left && right && float(object.pos.x) <= object.renderPos.x && attemptMove(level, &object, ivec2(1, 0)))
+                object.pos.x++;
+        }
+
+        if (object.type != Tile.WallTile && !onTile && vec2(object.pos) == object.renderPos)
+            object.pos.y++;
+
+        object.renderPos = moveTowards(object.renderPos, vec2(object.pos), objectSpeed * deltaTime);
+    }
+
+    ivec2 mousePos = undefined;
+    var buttons = SDL_GetMouseState(&mousePos.x, &mousePos.y);
+    var clickedTilePos = mousePos / tileSize;
+
+    if ((buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0)
+    {
+        if (state.lastClickedPos != clickedTilePos)
+        {
+            level.addObject(clickedTilePos, state.brush);
+            state.lastClickedPos = clickedTilePos;
+        }
+    }
+    else if ((buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0)
+    {
+        if (state.lastClickedPos != clickedTilePos)
+        {
+            level.removeObject(clickedTilePos);
+            state.lastClickedPos = clickedTilePos;
+        }
+    }
+    else
+    {
+        state.lastClickedPos = ivec2(-1, -1);
+    }
+}
+
+int main()
+{
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
+        SDL_Log("Cannot initialize SDL: %s", SDL_GetError());
+        return 1;
+    }
+
+    var window = SDL_CreateWindow("Module7", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0);
+    if (!window)
+    {
+        SDL_Log("Cannot create window: %s", SDL_GetError());
+        return 1;
+    }
+
+    renderer = SDL_CreateRenderer(window, -1, 0);
+    if (!renderer)
+    {
+        SDL_Log("Cannot create renderer: %s", SDL_GetError());
+        return 1;
+    }
+
+    SDL_Event event = undefined;
+    var keyboardState = cast<const uint8[?]*>(SDL_GetKeyboardState(null)!);
+    var running = true;
+    uint64 previousTime = 0;
+    uint64 currentTime = 0;
+
+    var state = GameState();
+    state.level.load();
+
+    while (running)
+    {
+        previousTime = currentTime;
+        currentTime = SDL_GetPerformanceCounter();
+        var deltaTime = float(currentTime - previousTime) / float(SDL_GetPerformanceFrequency());
+
+        while (SDL_PollEvent(event) != 0)
+        {
+            switch (event.type)
+            {
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.sym)
+                    {
+                        case SDLK_0:
+                            state.brush = Tile.Player;
+                            break;
+                        case SDLK_1:
+                            state.brush = Tile.WallTile;
+                            break;
+                        case SDLK_2:
+                            state.brush = Tile.BoxTile;
+                            break;
+                    }
+                    break;
+                case SDL_QUIT:
+                    running = false;
+                    break;
+            }
+        }
+
+        SDL_RenderClear(renderer);
+        renderLevel(state.level);
+        SDL_RenderPresent(renderer);
+
+        update(&state, keyboardState, deltaTime);
+    }
+
+    state.level.save();
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    return 0;
+}

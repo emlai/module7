@@ -1,0 +1,8 @@
+// TODO(compiler): Import simple expression macros like the following from C headers?
+uint SDL_BUTTON(uint x)
+{
+    return 1 << (x - 1);
+}
+
+// TODO(compiler): For some reason this is not parsed correctly from the included headers.
+const SDL_WINDOWPOS_UNDEFINED = 0x1fff0000;

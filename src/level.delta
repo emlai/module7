@@ -1,0 +1,94 @@
+const tileSize = 16;
+
+enum Tile
+{
+    WallTile,
+    BoxTile,
+    Player
+}
+
+struct Object
+{
+    Tile type;
+    ivec2 pos;
+    vec2 renderPos;
+
+    init(Tile type, ivec2 pos)
+    {
+        this.type = type;
+        this.pos = pos;
+        this.renderPos = vec2(pos);
+    }
+}
+
+struct Level
+{
+    List<Object> objects;
+
+    init()
+    {
+        objects = List<Object>();
+    }
+
+    void addObject(ivec2 pos, Tile type)
+    {
+        if (getTile(pos))
+            return;
+
+        objects.push(Object(type, pos));
+    }
+
+    void removeObject(ivec2 pos)
+    {
+        // TODO: Use List.removeIf once lambda captures are implemented.
+        for (var object in objects.enumerate())
+        {
+            if (object.value.pos == pos)
+            {
+                objects.removeAt(object.index);
+                break;
+            }
+        }
+    }
+
+    Object*? getTile(ivec2 pos)
+    {
+        // TODO: Use List.find once lambda captures are implemented.
+        for (var object in objects)
+        {
+            if (object.pos == pos)
+                return object;
+        }
+
+        return null;
+    }
+
+    void save()
+    {
+        var file = fopen("level001.dat", "wb")!;
+        fwrite(objects.data(), sizeof(Object), uint64(objects.size()), file);
+        fclose(file);
+    }
+
+    void load()
+    {
+        var file = fopen("level001.dat", "rb");
+
+        if (file)
+        {
+            fseek(file, 0, SEEK_END);
+            // FIXME: file shouldn't need to be unwrapped after this line.
+            var size = ftell(file!);
+            fseek(file!, 0, SEEK_SET);
+            var count = uint64(size) / sizeof(Object);
+            objects.resizeUninitialized(int(count));
+            fread(objects.data(), sizeof(Object), count, file!);
+            fclose(file!);
+        }
+        else
+        {
+            addObject(ivec2(0, 0), Tile.Player);
+            return;
+        }
+    }
+}

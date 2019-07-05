@@ -1,26 +1,30 @@
-#include "render.h"
-#include "level.h"
-#include <SDL.h>
+import "SDL.h";
 
-SDL_Renderer* renderer;
+struct SDL_Renderer {}
+
+SDL_Renderer*? renderer = null;
 
 void renderLevel(Level* level)
 {
     SDL_SetRenderDrawColor(renderer, 0xcc, 0xcc, 0xcc, 0xff);
-    SDL_RenderFillRect(renderer, nullptr);
+    SDL_RenderFillRect(renderer, null);
 
-    for (auto& object : level->objects)
+    for (var object in level.objects)
     {
-        SDL_Rect rect = { int(object.renderPos.x * tileSize), int(object.renderPos.y * tileSize), tileSize, tileSize };
+        SDL_Rect rect = undefined;
+        rect.x = int(object.renderPos.x * tileSize);
+        rect.y = int(object.renderPos.y * tileSize);
+        rect.w = tileSize;
+        rect.h = tileSize;
 
         switch (object.type)
         {
-            case WallTile:
+            case Tile.WallTile:
                 SDL_SetRenderDrawColor(renderer, 0x66, 0x66, 0x66, 0xff);
                 SDL_RenderFillRect(renderer, &rect);
                 break;
 
-            case BoxTile:
+            case Tile.BoxTile:
                 SDL_SetRenderDrawColor(renderer, 0x44, 0x44, 0x44, 0xff);
                 SDL_RenderFillRect(renderer, &rect);
                 rect.x += 1;
@@ -31,7 +35,7 @@ void renderLevel(Level* level)
                 SDL_RenderFillRect(renderer, &rect);
                 break;
 
-            case Player:
+            case Tile.Player:
                 SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0x33, 0xff);
                 rect.x += tileSize / 4;
                 rect.y += tileSize / 4;
@@ -42,9 +46,13 @@ void renderLevel(Level* level)
         }
     }
 
-    SDL_Point mouse;
+    SDL_Point mouse = undefined;
     SDL_GetMouseState(&mouse.x, &mouse.y);
-    SDL_Rect rect = { mouse.x / tileSize * tileSize, mouse.y / tileSize * tileSize, tileSize, tileSize };
+    SDL_Rect rect = undefined;
+    rect.x = mouse.x / tileSize * tileSize;
+    rect.y = mouse.y / tileSize * tileSize;
+    rect.w = tileSize;
+    rect.h = tileSize;
     SDL_SetRenderDrawColor(renderer, 0x00, 0xff, 0x00, 0xff);
     SDL_RenderDrawRect(renderer, &rect);
 }
