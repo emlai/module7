@@ -1,5 +1,8 @@
 import "SDL.h";
 
+const width = 640;
+const height = 480;
+const scale = 2;
 const objectSpeed = 10;
 
 vec2 moveTowards(vec2 current, vec2 target, float maxDistance)
@@ -81,7 +84,7 @@ void update(GameState* state, uint8[?]* keyboardState, float deltaTime)
 
     ivec2 mousePos = undefined;
     var buttons = SDL_GetMouseState(&mousePos.x, &mousePos.y);
-    var clickedTilePos = mousePos / tileSize;
+    var clickedTilePos = mousePos / scale / tileSize;
 
     if ((buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0)
     {
@@ -113,7 +116,7 @@ int main()
         return 1;
     }
 
-    var window = SDL_CreateWindow("Module7", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0);
+    var window = SDL_CreateWindow("Module7", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width * scale, height * scale, 0);
     if (!window)
     {
         SDL_Log("Cannot create window: %s", SDL_GetError());
@@ -126,6 +129,8 @@ int main()
         SDL_Log("Cannot create renderer: %s", SDL_GetError());
         return 1;
     }
+
+    SDL_RenderSetLogicalSize(renderer, width, height);
 
     SDL_Event event = undefined;
     var keyboardState = cast<const uint8[?]*>(SDL_GetKeyboardState(null)!);
