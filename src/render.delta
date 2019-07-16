@@ -22,7 +22,6 @@ void renderLevel(Level* level)
             case Tile.WallTile:
                 SDL_SetRenderDrawColor(renderer, 0x66, 0x66, 0x66, 0xff);
                 SDL_RenderFillRect(renderer, &rect);
-                break;
 
             case Tile.BoxTile:
                 SDL_SetRenderDrawColor(renderer, 0x44, 0x44, 0x44, 0xff);
@@ -33,7 +32,6 @@ void renderLevel(Level* level)
                 rect.h -= 2;
                 SDL_SetRenderDrawColor(renderer, 0x55, 0x55, 0x55, 0xff);
                 SDL_RenderFillRect(renderer, &rect);
-                break;
 
             case Tile.Player:
                 SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0x33, 0xff);
@@ -42,7 +40,6 @@ void renderLevel(Level* level)
                 rect.w /= 2;
                 rect.h -= tileSize / 4;
                 SDL_RenderFillRect(renderer, &rect);
-                break;
         }
     }
 

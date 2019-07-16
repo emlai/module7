@@ -151,18 +151,13 @@ int main()
                     {
                         case SDLK_0:
                             state.brush = Tile.Player;
-                            break;
                         case SDLK_1:
                             state.brush = Tile.WallTile;
-                            break;
                         case SDLK_2:
                             state.brush = Tile.BoxTile;
-                            break;
                     }
-                    break;
                 case SDL_QUIT:
                     running = false;
-                    break;
             }
         }
 
