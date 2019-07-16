@@ -46,8 +46,8 @@ void renderLevel(Level* level)
     SDL_Point mouse = undefined;
     SDL_GetMouseState(&mouse.x, &mouse.y);
     SDL_Rect rect = undefined;
-    rect.x = mouse.x / tileSize * tileSize;
-    rect.y = mouse.y / tileSize * tileSize;
+    rect.x = mouse.x / scale / tileSize * tileSize;
+    rect.y = mouse.y / scale / tileSize * tileSize;
     rect.w = tileSize;
     rect.h = tileSize;
     SDL_SetRenderDrawColor(renderer, 0x00, 0xff, 0x00, 0xff);
