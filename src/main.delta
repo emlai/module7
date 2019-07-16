@@ -59,22 +59,25 @@ void update(GameState* state, uint8[?]* keyboardState, float deltaTime)
     var level = &state.level;
     var left = keyboardState[SDL_SCANCODE_LEFT] != 0;
     var right = keyboardState[SDL_SCANCODE_RIGHT] != 0;
+    var up = keyboardState[SDL_SCANCODE_UP] != 0;
+    var down = keyboardState[SDL_SCANCODE_DOWN] != 0;
 
     for (var object in state.level.objects)
     {
-        var onTile = float(object.pos.y) == object.renderPos.y && level.getTile(object.pos + ivec2(0, 1)) != null;
-
         if (object.type == Tile.Player)
         {
-            if (onTile && left && !right && float(object.pos.x) >= object.renderPos.x && attemptMove(level, &object, ivec2(-1, 0)))
+            if (left && !right && !up && !down && float(object.pos.x) >= object.renderPos.x && attemptMove(level, &object, ivec2(-1, 0)))
                 object.pos.x--;
 
-            if (onTile && !left && right && float(object.pos.x) <= object.renderPos.x && attemptMove(level, &object, ivec2(1, 0)))
+            if (!left && right && !up && !down && float(object.pos.x) <= object.renderPos.x && attemptMove(level, &object, ivec2(1, 0)))
                 object.pos.x++;
-        }
 
-        if (object.type != Tile.WallTile && !onTile && vec2(object.pos) == object.renderPos)
-            object.pos.y++;
+            if (!left && !right && up && !down && float(object.pos.y) >= object.renderPos.y && attemptMove(level, &object, ivec2(0, -1)))
+                object.pos.y--;
+
+            if (!left && !right && !up && down && float(object.pos.y) <= object.renderPos.y && attemptMove(level, &object, ivec2(0, 1)))
+                object.pos.y++;
+        }
 
         object.renderPos = moveTowards(object.renderPos, vec2(object.pos), objectSpeed * deltaTime);
     }
