@@ -158,6 +158,8 @@ int main()
                             state.brush = Tile.WallTile;
                         case SDLK_2:
                             state.brush = Tile.BoxTile;
+                        case SDLK_ESCAPE:
+                            running = false;
                     }
                 case SDL_QUIT:
                     running = false;
