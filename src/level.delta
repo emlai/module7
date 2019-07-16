@@ -40,7 +40,7 @@ struct Level
 
     void removeObject(ivec2 pos)
     {
-        // TODO: Use List.removeIf once lambda captures are implemented.
+        // TODO: Use List.removeFirst once lambda captures are implemented.
         for (var object in objects.enumerate())
         {
             if (object.value.pos == pos)
