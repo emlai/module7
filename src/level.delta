@@ -25,9 +25,19 @@ struct Level
 {
     List<Object> objects;
 
-    init()
+    init(ivec2 size)
     {
         objects = List<Object>();
+
+        for (var x in 0..size.x)
+        {
+            for (var y in 0..size.y)
+            {
+                addObject(ivec2(x, y), Tile.WallTile);
+            }
+        }
+
+        addObject(ivec2(0, 0), Tile.Player);
     }
 
     void addObject(ivec2 pos, Tile type)
@@ -61,34 +71,5 @@ struct Level
         }
 
         return null;
-    }
-
-    void save()
-    {
-        var file = fopen("level001.dat", "wb")!;
-        fwrite(objects.data(), sizeof(Object), uint64(objects.size()), file);
-        fclose(file);
-    }
-
-    void load()
-    {
-        var file = fopen("level001.dat", "rb");
-
-        if (file)
-        {
-            fseek(file, 0, SEEK_END);
-            // FIXME: file shouldn't need to be unwrapped after this line.
-            var size = ftell(file!);
-            fseek(file!, 0, SEEK_SET);
-            var count = uint64(size) / sizeof(Object);
-            objects.resizeUninitialized(int(count));
-            fread(objects.data(), sizeof(Object), count, file!);
-            fclose(file!);
-        }
-        else
-        {
-            addObject(ivec2(0, 0), Tile.Player);
-            return;
-        }
     }
 }

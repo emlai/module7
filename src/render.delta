@@ -1,5 +1,6 @@
 import "SDL.h";
 
+// TODO: This shouldn't be necessary?
 struct SDL_Renderer {}
 
 SDL_Renderer*? renderer = null;

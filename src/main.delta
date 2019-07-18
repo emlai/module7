@@ -22,9 +22,9 @@ struct GameState
     Tile brush;
     ivec2 lastClickedPos;
 
-    init()
+    init(ivec2 levelSize)
     {
-        level = Level();
+        level = Level(levelSize);
         brush = Tile.WallTile;
         lastClickedPos = ivec2(-1, -1);
     }
@@ -141,8 +141,8 @@ int main()
     uint64 previousTime = 0;
     uint64 currentTime = 0;
 
-    var state = GameState();
-    state.level.load();
+    var levelSize = ivec2(width / tileSize, height / tileSize);
+    var state = GameState(levelSize);
 
     while (running)
     {
@@ -178,7 +178,6 @@ int main()
         update(&state, keyboardState, deltaTime);
     }
 
-    state.level.save();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
