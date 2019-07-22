@@ -1,9 +1,25 @@
 const tileSize = 16;
 
+struct Directions
+{
+    bool north;
+    bool east;
+    bool south;
+    bool west;
+
+    init(bool north, bool east, bool south, bool west)
+    {
+        this.north = north;
+        this.east = east;
+        this.south = south;
+        this.west = west;
+    }
+}
+
 enum Tile
 {
-    WallTile,
-    BoxTile,
+    Movable(Directions directions),
+    NonMovable(Directions directions),
     Player
 }
 
@@ -28,23 +44,12 @@ struct Level
     init(ivec2 size)
     {
         objects = List<Object>();
-
-        for (var x in 0..size.x)
-        {
-            for (var y in 0..size.y)
-            {
-                addObject(ivec2(x, y), Tile.WallTile);
-            }
-        }
-
-        addObject(ivec2(0, 0), Tile.Player);
+        setObject(size / 2, Tile.Player);
     }
 
-    void addObject(ivec2 pos, Tile type)
+    void setObject(ivec2 pos, Tile type)
     {
-        if (getTile(pos))
-            return;
-
+        removeObject(pos);
         objects.push(Object(type, pos));
     }
 

@@ -5,6 +5,55 @@ struct SDL_Renderer {}
 
 SDL_Renderer*? renderer = null;
 
+const wallThickness = 3;
+
+void renderTile(SDL_Rect* rect, Directions* directions, uint8 wallColor, uint8 floorColor)
+{
+    SDL_SetRenderDrawColor(renderer, wallColor, wallColor, wallColor, 0xff);
+    SDL_RenderFillRect(renderer, &rect);
+    SDL_SetRenderDrawColor(renderer, floorColor, floorColor, floorColor, 0xff);
+
+    if (directions.north)
+    {
+        SDL_Rect northRect = undefined;
+        northRect.x = rect.x + wallThickness;
+        northRect.y = rect.y;
+        northRect.w = rect.w - wallThickness * 2;
+        northRect.h = rect.h - wallThickness;
+        SDL_RenderFillRect(renderer, &northRect);
+    }
+
+    if (directions.east)
+    {
+        SDL_Rect eastRect = undefined;
+        eastRect.x = rect.x + wallThickness;
+        eastRect.y = rect.y + wallThickness;
+        eastRect.w = rect.w - wallThickness;
+        eastRect.h = rect.h - wallThickness * 2;
+        SDL_RenderFillRect(renderer, &eastRect);
+    }
+
+    if (directions.south)
+    {
+        SDL_Rect southRect = undefined;
+        southRect.x = rect.x + wallThickness;
+        southRect.y = rect.y + wallThickness;
+        southRect.w = rect.w - wallThickness * 2;
+        southRect.h = rect.h - wallThickness;
+        SDL_RenderFillRect(renderer, &southRect);
+    }
+
+    if (directions.west)
+    {
+        SDL_Rect westRect = undefined;
+        westRect.x = rect.x;
+        westRect.y = rect.y + wallThickness;
+        westRect.w = rect.w - wallThickness;
+        westRect.h = rect.h - wallThickness * 2;
+        SDL_RenderFillRect(renderer, &westRect);
+    }
+}
+
 void renderLevel(Level* level)
 {
     SDL_SetRenderDrawColor(renderer, 0xcc, 0xcc, 0xcc, 0xff);
@@ -20,19 +69,11 @@ void renderLevel(Level* level)
 
         switch (object.type)
         {
-            case Tile.WallTile:
-                SDL_SetRenderDrawColor(renderer, 0x66, 0x66, 0x66, 0xff);
-                SDL_RenderFillRect(renderer, &rect);
+            case Tile.NonMovable as tile:
+                renderTile(rect, tile.directions, 0x66, 0xcc);
 
-            case Tile.BoxTile:
-                SDL_SetRenderDrawColor(renderer, 0x44, 0x44, 0x44, 0xff);
-                SDL_RenderFillRect(renderer, &rect);
-                rect.x += 1;
-                rect.y += 1;
-                rect.w -= 2;
-                rect.h -= 2;
-                SDL_SetRenderDrawColor(renderer, 0x55, 0x55, 0x55, 0xff);
-                SDL_RenderFillRect(renderer, &rect);
+            case Tile.Movable as tile:
+                renderTile(rect, tile.directions, 0x55, 0xaa);
 
             case Tile.Player:
                 SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0x33, 0xff);
