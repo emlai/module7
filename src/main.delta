@@ -5,17 +5,6 @@ const height = 480;
 const scale = 2;
 const objectSpeed = 10;
 
-vec2 moveTowards(vec2 current, vec2 target, float maxDistance)
-{
-    var diff = target - current;
-    var magnitude = diff.length();
-
-    if (magnitude <= maxDistance || magnitude == 0)
-        return target;
-
-    return current + diff / magnitude * maxDistance;
-}
-
 struct GameState
 {
     Level level;

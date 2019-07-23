@@ -64,3 +64,14 @@ bool operator!=<T>(T a, T b)
 {
     return a.x != b.x || a.y != b.y;
 }
+
+vec2 moveTowards(vec2 current, vec2 target, float maxDistance)
+{
+    var diff = target - current;
+    var magnitude = diff.length();
+
+    if (magnitude <= maxDistance || magnitude == 0)
+        return target;
+
+    return current + diff / magnitude * maxDistance;
+}

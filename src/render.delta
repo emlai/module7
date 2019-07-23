@@ -5,10 +5,18 @@ struct SDL_Renderer {}
 
 SDL_Renderer*? renderer = null;
 
-const wallThickness = 3;
+const tileSize = 20;
+const playerSize = tileSize / 2;
+const wallThickness = tileSize / 5;
 
-void renderTile(SDL_Rect* rect, Directions* directions, uint8 wallColor, uint8 floorColor)
+void renderTile(Object* object, Directions directions, uint8 wallColor, uint8 floorColor)
 {
+    SDL_Rect rect = undefined;
+    rect.x = int(object.renderPos.x * tileSize);
+    rect.y = int(object.renderPos.y * tileSize);
+    rect.w = tileSize;
+    rect.h = tileSize;
+
     SDL_SetRenderDrawColor(renderer, wallColor, wallColor, wallColor, 0xff);
     SDL_RenderFillRect(renderer, &rect);
     SDL_SetRenderDrawColor(renderer, floorColor, floorColor, floorColor, 0xff);
@@ -61,27 +69,27 @@ void renderLevel(Level* level)
 
     for (var object in level.objects)
     {
-        SDL_Rect rect = undefined;
-        rect.x = int(object.renderPos.x * tileSize);
-        rect.y = int(object.renderPos.y * tileSize);
-        rect.w = tileSize;
-        rect.h = tileSize;
-
         switch (object.type)
         {
             case Tile.NonMovable as tile:
-                renderTile(rect, tile.directions, 0x66, 0xcc);
+                renderTile(object, tile.directions, 0x66, 0xcc);
 
             case Tile.Movable as tile:
-                renderTile(rect, tile.directions, 0x55, 0xaa);
+                renderTile(object, tile.directions, 0x55, 0xaa);
+        }
+    }
 
-            case Tile.Player:
-                SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0x33, 0xff);
-                rect.x += tileSize / 4;
-                rect.y += tileSize / 4;
-                rect.w /= 2;
-                rect.h -= tileSize / 4;
-                SDL_RenderFillRect(renderer, &rect);
+    for (var object in level.objects)
+    {
+        if (object.type == Tile.Player)
+        {
+            SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0x33, 0xff);
+            SDL_Rect rect = undefined;
+            rect.x = int(object.renderPos.x * tileSize) + playerSize / 2;
+            rect.y = int(object.renderPos.y * tileSize) + playerSize / 2;
+            rect.w = playerSize;
+            rect.h = playerSize;
+            SDL_RenderFillRect(renderer, &rect);
         }
     }
 
