@@ -4,14 +4,6 @@ struct Directions
     bool east;
     bool south;
     bool west;
-
-    init(bool north, bool east, bool south, bool west)
-    {
-        this.north = north;
-        this.east = east;
-        this.south = south;
-        this.west = west;
-    }
 }
 
 enum Tile
