@@ -71,17 +71,14 @@ void renderLevel(Level* level)
     {
         switch (object.type)
         {
-            case Tile.NonMovable as tile:
-                renderTile(object, tile.directions, 0x66, 0xcc);
-
-            case Tile.Movable as tile:
-                renderTile(object, tile.directions, 0x55, 0xaa);
+            case ObjectType.Tile as tile:
+                renderTile(object, tile.directions, tile.movable ? 0x55 : 0x66, tile.movable ? 0xaa : 0xcc);
         }
     }
 
     for (var object in level.objects)
     {
-        if (object.type == Tile.Player)
+        if (object.type == ObjectType.Player)
         {
             SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0x33, 0xff);
             SDL_Rect rect = undefined;

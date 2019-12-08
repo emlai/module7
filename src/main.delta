@@ -8,7 +8,7 @@ const objectSpeed = 10;
 struct GameState
 {
     Level level;
-    Tile brush;
+    ObjectType brush;
     Directions brushDirections;
     ivec2 lastClickedPos;
 
@@ -16,7 +16,7 @@ struct GameState
     {
         level = Level(levelSize);
         brushDirections = Directions(false, false, false, false);
-        brush = Tile.NonMovable(brushDirections);
+        brush = ObjectType.Tile(brushDirections, false);
         lastClickedPos = ivec2(-1, -1);
     }
 }
@@ -41,21 +41,18 @@ bool canMove(ivec2 dir, Directions directions)
 bool attemptMove(Level* level, Object* mover, ivec2 dir)
 {
     var pos = mover.pos + dir;
-    var object = level.getTile(pos);
+    var object = level.getObject(pos);
 
     if (!object)
         return true;
 
     switch (object!.type)
     {
-        case Tile.NonMovable as tile:
-            return canMove(dir, tile.directions);
-
-        case Tile.Movable as tile:
+        case ObjectType.Tile as tile:
             if (canMove(dir, tile.directions))
                 return true;
 
-            if (attemptMove(level, object!, dir))
+            if (tile.movable && attemptMove(level, object!, dir))
             {
                 object!.pos = pos + dir;
                 return true;
@@ -63,7 +60,7 @@ bool attemptMove(Level* level, Object* mover, ivec2 dir)
 
             return false;
 
-        case Tile.Player:
+        case ObjectType.Player:
             return false;
     }
 
@@ -81,7 +78,7 @@ void update(GameState* state, uint8[?]* keyboardState, float deltaTime)
 
     for (var object in state.level.objects)
     {
-        if (object.type == Tile.Player)
+        if (object.type == ObjectType.Player)
         {
             if (left && !right && !up && !down && float(object.pos.x) >= object.renderPos.x && attemptMove(level, &object, ivec2(-1, 0)))
                 object.pos.x--;
@@ -172,11 +169,11 @@ int main()
                     switch (event.key.keysym.sym)
                     {
                         case SDLK_1:
-                            state.brush = Tile.Player;
+                            state.brush = ObjectType.Player;
                         case SDLK_2:
-                            state.brush = Tile.NonMovable(Directions(false, false, false, false));
+                            state.brush = ObjectType.Tile(Directions(false, false, false, false), movable: false);
                         case SDLK_3:
-                            state.brush = Tile.Movable(Directions(false, false, false, false));
+                            state.brush = ObjectType.Tile(Directions(false, false, false, false), movable: true);
                         case SDLK_w:
                             state.brushDirections.north = !state.brushDirections.north;
                             updateBrushDirections(state);
@@ -214,9 +211,7 @@ void updateBrushDirections(GameState* state)
 {
     switch (state.brush)
     {
-        case Tile.NonMovable as tile:
-            tile.directions = state.brushDirections;
-        case Tile.Movable as tile:
+        case ObjectType.Tile as tile:
             tile.directions = state.brushDirections;
     }
 }

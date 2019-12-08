@@ -6,24 +6,28 @@ struct Directions
     bool west;
 }
 
-enum Tile
+enum ObjectType
 {
-    Movable(Directions directions),
-    NonMovable(Directions directions),
+    Tile(Directions directions, bool movable),
     Player
 }
 
 struct Object
 {
-    Tile type;
+    ObjectType type;
     ivec2 pos;
     vec2 renderPos;
 
-    init(Tile type, ivec2 pos)
+    init(ObjectType type, ivec2 pos)
     {
         this.type = type;
         this.pos = pos;
         this.renderPos = vec2(pos);
+    }
+
+    bool isPlayer()
+    {
+        return type == ObjectType.Player;
     }
 }
 
@@ -34,10 +38,10 @@ struct Level
     init(ivec2 size)
     {
         objects = List<Object>();
-        setObject(size / 2, Tile.Player);
+        setObject(size / 2, ObjectType.Player);
     }
 
-    void setObject(ivec2 pos, Tile type)
+    void setObject(ivec2 pos, ObjectType type)
     {
         removeObject(pos);
         objects.push(Object(type, pos));
@@ -45,7 +49,6 @@ struct Level
 
     void removeObject(ivec2 pos)
     {
-        // TODO: Use List.removeFirst once lambda captures are implemented.
         for (var object in objects.enumerate())
         {
             if (object.value.pos == pos)
@@ -56,12 +59,22 @@ struct Level
         }
     }
 
-    Object*? getTile(ivec2 pos)
+    Object*? getObject(ivec2 pos)
     {
-        // TODO: Use List.find once lambda captures are implemented.
         for (var object in objects)
         {
             if (object.pos == pos)
+                return object;
+        }
+
+        return null;
+    }
+
+    Object*? getTile(ivec2 pos)
+    {
+        for (var object in objects)
+        {
+            if (object.pos == pos && object.type == ObjectType.Tile)
                 return object;
         }
 
