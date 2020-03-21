@@ -13,7 +13,7 @@ struct Object
     ivec2 pos;
     vec2 renderPos;
 
-    init(Tile type, ivec2 pos)
+    Object(Tile type, ivec2 pos)
     {
         this.type = type;
         this.pos = pos;
@@ -25,7 +25,7 @@ struct Level
 {
     List<Object> objects;
 
-    init()
+    Level()
     {
         objects = List<Object>();
     }
@@ -81,7 +81,7 @@ struct Level
             var size = ftell(file!);
             fseek(file!, 0, SEEK_SET);
             var count = uint64(size) / sizeof(Object);
-            objects.resizeUninitialized(int(count));
+            objects = List(uninitializedSize: int(count));
             fread(objects.data(), sizeof(Object), count, file!);
             fclose(file!);
         }

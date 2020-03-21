@@ -22,7 +22,7 @@ struct GameState
     Tile brush;
     ivec2 lastClickedPos;
 
-    init()
+    GameState()
     {
         level = Level();
         brush = Tile.WallTile;
@@ -38,7 +38,7 @@ bool attemptMove(Level* level, Object* mover, ivec2 dir)
     if (!object)
         return true;
 
-    switch (object!.type)
+    switch (object.type)
     {
         case Tile.WallTile:
             return false;
