@@ -5,7 +5,7 @@ struct ivec2: Copyable
     int x;
     int y;
 
-    init(int x, int y)
+    ivec2(int x, int y)
     {
         this.x = x;
         this.y = y;
@@ -17,13 +17,13 @@ struct vec2: Copyable
     float x;
     float y;
 
-    init(float x, float y)
+    vec2(float x, float y)
     {
         this.x = x;
         this.y = y;
     }
 
-    init(ivec2 v)
+    vec2(ivec2 v)
     {
         this.x = float(v.x);
         this.y = float(v.y);

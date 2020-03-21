@@ -12,7 +12,7 @@ struct GameState
     Directions brushDirections;
     ivec2 lastClickedPos;
 
-    init(ivec2 levelSize)
+    GameState(ivec2 levelSize)
     {
         level = Level(levelSize);
         brushDirections = Directions(false, false, false, false);
@@ -46,7 +46,7 @@ bool attemptMove(Level* level, Object* mover, ivec2 dir)
     if (!object)
         return true;
 
-    switch (object!.type)
+    switch (object.type)
     {
         case ObjectType.Tile as tile:
             if (canMove(dir, tile.directions))

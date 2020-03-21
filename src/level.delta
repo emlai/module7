@@ -18,7 +18,7 @@ struct Object
     ivec2 pos;
     vec2 renderPos;
 
-    init(ObjectType type, ivec2 pos)
+    Object(ObjectType type, ivec2 pos)
     {
         this.type = type;
         this.pos = pos;
@@ -35,7 +35,7 @@ struct Level
 {
     List<Object> objects;
 
-    init(ivec2 size)
+    Level(ivec2 size)
     {
         objects = List<Object>();
         setObject(size / 2, ObjectType.Player);
